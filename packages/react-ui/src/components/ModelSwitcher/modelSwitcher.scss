@@ -1,0 +1,172 @@
+@use "../../cssUtils" as cssUtils;
+
+.openui-model-switcher {
+  min-width: 0;
+
+  // Compact pill: 32px, filled, flat (no border or shadow); small logo, 12px
+  // name, faint chevron.
+  & &-trigger {
+    display: flex;
+    height: 32px;
+    width: auto;
+    max-width: 240px;
+    align-items: center;
+    justify-content: flex-start;
+    gap: cssUtils.$space-xs;
+    border: none;
+    border-radius: cssUtils.$radius-full;
+    background-color: cssUtils.$highlight;
+    padding: 0 cssUtils.$space-m;
+    color: cssUtils.$text-neutral-primary;
+    box-shadow: none;
+    font-size: 12px;
+    font-weight: 400;
+    font-variation-settings: cssUtils.$font-variation-regular;
+    line-height: 12px;
+
+    &:hover,
+    &[data-state="open"] {
+      background-color: cssUtils.$highlight-strong;
+      color: cssUtils.$text-neutral-primary;
+    }
+
+    .openui-model-switcher-logo {
+      width: 14px;
+      height: 14px;
+    }
+
+    // The badge dot doesn't fit the pill; the name and logo carry the model.
+    .openui-model-switcher-badge-trigger {
+      display: none;
+    }
+
+    .openui-select-trigger-icon {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+      opacity: 0.4;
+    }
+  }
+
+  // Menu look (ring, shadow, 32px edge-to-edge rows, labels) comes from the
+  // shared Select styles; only size it here.
+  &-content.openui-select-content {
+    // Fill the space Radix reports below the trigger, ending 12px above the
+    // thread card's bottom edge so the menu's insets match ThreadHeader's 12px
+    // inset from the card's top-left (Radix already reserves the viewport margin).
+    max-height: calc(var(--radix-select-content-available-height, 376px) - 6px);
+    width: min(283px, calc(100vw - 32px));
+    overflow: auto;
+  }
+
+  // Row badge ("Free"): a small pill rather than the default sm Tag.
+  &-row .openui-tag.openui-tag-sm {
+    height: 18px;
+    padding: 0 cssUtils.$space-s;
+    border-radius: cssUtils.$radius-full;
+    flex-shrink: 0;
+
+    .openui-tag-text {
+      font-size: 11px;
+      line-height: 18px;
+    }
+  }
+
+  &-row {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    gap: cssUtils.$space-xs;
+  }
+
+  &-name {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-logo {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+
+    & > * {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &-dot {
+    height: 6px;
+    width: 6px;
+    flex-shrink: 0;
+    border-radius: 9999px;
+
+    &-recommended {
+      background-color: cssUtils.$border-info-emphasis;
+    }
+
+    &-badge {
+      background-color: cssUtils.$border-success-emphasis;
+    }
+  }
+
+  &-badge-trigger {
+    display: inline-flex;
+    height: 20px;
+    width: 20px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 1px solid cssUtils.$border-default;
+  }
+
+  &-skeleton-dot {
+    height: 20px;
+    width: 20px;
+    flex-shrink: 0;
+    border-radius: cssUtils.$radius-m;
+    background-color: cssUtils.$border-default;
+    animation: openui-model-switcher-pulse 1.5s ease-in-out infinite;
+  }
+
+  &-skeleton-bar {
+    height: 16px;
+    width: 96px;
+    border-radius: cssUtils.$radius-m;
+    background-color: cssUtils.$border-default;
+    animation: openui-model-switcher-pulse 1.5s ease-in-out infinite;
+  }
+
+  // Visually-hidden label for the trigger's badge dot.
+  &-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+@keyframes openui-model-switcher-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

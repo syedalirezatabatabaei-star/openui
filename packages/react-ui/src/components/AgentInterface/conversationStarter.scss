@@ -1,0 +1,254 @@
+@use "../../cssUtils" as cssUtils;
+@use "./column";
+
+// Container styles
+.openui-agent-conversation-starter {
+  width: 100%;
+  // Starters sit above the composer input, so track the composer's
+  // column (see components/composer.scss) so the row lines up with the input.
+  max-width: calc(#{column.$content-width} + #{cssUtils.$space-m-l} * 2);
+  margin: 0 auto;
+  padding: 0 cssUtils.$space-m-l cssUtils.$space-m;
+  box-sizing: border-box;
+  max-height: 480px;
+  overflow: hidden;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    max-height 0.2s ease,
+    padding-bottom 0.2s ease;
+  // Short variant - horizontal pill buttons
+  &--short {
+    display: block;
+  }
+
+  // Long variant - vertical stacked list
+  &--long {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: cssUtils.$space-m;
+  }
+
+  // Card variant - a row of equal-width cards, inset from the composer edges.
+  &--card {
+    display: flex;
+    align-items: stretch;
+    gap: cssUtils.$space-xs;
+    padding: 0 cssUtils.$space-m;
+  }
+
+  &__carousel-content {
+    gap: cssUtils.$space-xs;
+  }
+
+  &__separator {
+    width: 100%;
+    height: 1px;
+    margin: cssUtils.$space-2xs 0;
+    background-color: cssUtils.$border-default;
+    flex-shrink: 0;
+  }
+
+  // Mobile adjustments
+  .openui-agent-container--mobile & {
+    padding: 0 cssUtils.$space-l;
+  }
+
+  // Detailed-view active adjustments
+  .openui-agent-thread-container--detailed-view-active & {
+    padding: 0;
+  }
+}
+
+// Short variant item (pill-style buttons)
+.openui-agent-conversation-starter-item-short {
+  display: flex;
+  align-items: center;
+  gap: cssUtils.$space-xs;
+  width: fit-content;
+  flex: 0 0 auto;
+  padding: cssUtils.$space-s cssUtils.$space-s-m;
+  background-color: cssUtils.$foreground;
+  border: 1px solid cssUtils.$border-interactive;
+  border-radius: cssUtils.$radius-l;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  @include cssUtils.typography(body, small);
+  color: cssUtils.$text-neutral-primary;
+  text-align: left;
+
+  // Icon container
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: cssUtils.$text-neutral-primary;
+
+    & > svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  // Text
+  &__text {
+    flex: 1;
+    white-space: nowrap;
+  }
+
+  &:not(:disabled):hover {
+    background-color: cssUtils.$highlight;
+    border-color: cssUtils.$border-interactive-emphasis;
+  }
+
+  &:not(:disabled):active {
+    background-color: cssUtils.$highlight-subtle;
+  }
+
+  @media (max-width: 480px) {
+    padding: cssUtils.$space-s cssUtils.$space-s-m;
+  }
+}
+
+// Long variant item (list-style with icon and arrow)
+.openui-agent-conversation-starter-item-long {
+  display: flex;
+  align-items: center;
+  gap: cssUtils.$space-000;
+  width: 100%;
+  padding: cssUtils.$space-xs cssUtils.$space-m;
+  background-color: transparent;
+  border: none;
+  border-radius: cssUtils.$radius-m;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  @include cssUtils.typography(body, default);
+  color: cssUtils.$text-neutral-secondary;
+  text-align: left;
+  overflow: hidden;
+
+  // Content wrapper (icon + text)
+  &__content {
+    display: flex;
+    align-items: flex-start;
+    gap: cssUtils.$space-s;
+    flex: 1;
+    min-width: 0;
+  }
+
+  // Icon container - aligned to top with padding to align with first line of text
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding-top: cssUtils.$space-2xs;
+    color: cssUtils.$text-neutral-secondary;
+  }
+
+  // Text - allows wrapping for long content
+  &__text {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.5;
+    // Text wraps naturally, no truncation
+  }
+
+  // Arrow icon (shown on hover)
+  &__arrow {
+    display: flex;
+    align-self: flex-start;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding-top: cssUtils.$space-2xs;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    color: cssUtils.$text-neutral-secondary;
+  }
+
+  // Hover state
+  &:not(:disabled):hover {
+    background-color: cssUtils.$sunk;
+    color: cssUtils.$text-neutral-primary;
+
+    .openui-agent-conversation-starter-item-long__icon,
+    .openui-agent-conversation-starter-item-long__arrow {
+      color: cssUtils.$text-neutral-primary;
+      opacity: 1;
+    }
+  }
+
+  // Active/pressed state
+  &:not(:disabled):active {
+    background-color: cssUtils.$highlight-subtle;
+  }
+}
+
+// Card variant item (icon above wrapping text)
+$starter-muted: color-mix(in oklch, #{cssUtils.$text-neutral-primary} 60%, transparent);
+.openui-agent-conversation-starter-item-card {
+  appearance: none;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: cssUtils.$space-m;
+  padding: cssUtils.$space-m-l;
+  background-color: cssUtils.$sunk-light;
+  border: none;
+  border-radius: cssUtils.$radius-3xl;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  color: $starter-muted;
+  text-align: left;
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: $starter-muted;
+
+    & > svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  // Two lines max; longer copy ends with an ellipsis.
+  &__text {
+    display: -webkit-box;
+    min-width: 0;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  &:not(:disabled):hover {
+    background-color: cssUtils.$sunk;
+    color: cssUtils.$text-neutral-primary;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2.5px cssUtils.$border-default;
+  }
+}
+
+// The welcome screen zeroes starter padding; keep the card row's inset.
+.openui-agent-welcome-screen__desktop-starters
+  .openui-agent-conversation-starter.openui-agent-conversation-starter--card {
+  padding: 0 cssUtils.$space-m;
+}

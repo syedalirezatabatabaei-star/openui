@@ -1,0 +1,96 @@
+{
+  "name": "@openuidev/react-headless",
+  "version": "0.18.1",
+  "description": "Headless React primitives for AI chat — state management, streaming adapters for OpenAI, Vercel AI SDK, and AG-UI, message format converters, and thread management for OpenUI generative UI apps",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.cts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint:check": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
+    "format:fix": "prettier --write ./src",
+    "format:check": "prettier --check ./src",
+    "check:publint": "publint",
+    "check:attw": "attw --pack .",
+    "prepare": "pnpm run build",
+    "prepublishOnly": "pnpm run check:publint && pnpm run check:attw",
+    "ci": "pnpm run lint:check && pnpm run format:check"
+  },
+  "peerDependencies": {
+    "ai": "^6.0.0 || ^7.0.0",
+    "react": "catalog:",
+    "zustand": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "ai": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "ai": "^6.0.236",
+    "eve": "^0.11.7",
+    "jsdom": "catalog:",
+    "openai": "^6.22.0",
+    "react-dom": "catalog:",
+    "vitest": "^4.1.0"
+  },
+  "keywords": [
+    "openui",
+    "react",
+    "headless",
+    "chat",
+    "streaming",
+    "ai",
+    "generative-ui",
+    "llm",
+    "openai",
+    "vercel-ai-sdk",
+    "zustand",
+    "state-management",
+    "sse",
+    "server-sent-events",
+    "chatbot",
+    "copilot",
+    "agentic",
+    "ag-ui"
+  ],
+  "homepage": "https://openui.com",
+  "author": "engineering@thesys.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thesysdev/openui.git",
+    "directory": "packages/react-headless"
+  },
+  "bugs": {
+    "url": "https://github.com/thesysdev/openui/issues"
+  },
+  "dependencies": {
+    "@ag-ui/core": "^0.0.53",
+    "@openuidev/observability": "workspace:^"
+  }
+}

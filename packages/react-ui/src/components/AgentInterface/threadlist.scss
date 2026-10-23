@@ -1,0 +1,283 @@
+@use "../../cssUtils" as cssUtils;
+@use "../menu";
+
+$thread-list-mask-height: cssUtils.$space-xl;
+
+@keyframes openui-agent-thread-list-appear {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.openui-agent-thread-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: cssUtils.$space-2xs;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: cssUtils.$highlight-strong transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: cssUtils.$highlight-strong;
+    border-radius: cssUtils.$radius-full;
+
+    &:hover {
+      background-color: cssUtils.$highlight-intense;
+    }
+  }
+
+  .openui-agent-container--mobile & {
+    gap: cssUtils.$space-s;
+  }
+
+  &--mask-top#{&}--mask-bottom {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      black $thread-list-mask-height,
+      black calc(100% - #{$thread-list-mask-height}),
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      black $thread-list-mask-height,
+      black calc(100% - #{$thread-list-mask-height}),
+      transparent
+    );
+  }
+
+  &--mask-top:not(&--mask-bottom) {
+    mask-image: linear-gradient(to bottom, transparent, black $thread-list-mask-height, black);
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      black $thread-list-mask-height,
+      black
+    );
+  }
+
+  &--mask-bottom:not(&--mask-top) {
+    mask-image: linear-gradient(to top, transparent, black $thread-list-mask-height, black);
+    -webkit-mask-image: linear-gradient(to top, transparent, black $thread-list-mask-height, black);
+  }
+}
+
+.openui-agent-thread-list-content {
+  display: flex;
+  flex-direction: column;
+  gap: cssUtils.$space-2xs;
+  animation: openui-agent-thread-list-appear 180ms ease-out both;
+
+  .openui-agent-container--mobile & {
+    gap: cssUtils.$space-s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.openui-agent-thread-list-group {
+  display: flex;
+  padding-left: cssUtils.$space-xs;
+  padding-bottom: cssUtils.$space-xs;
+  color: cssUtils.$text-neutral-secondary;
+  @include cssUtils.typography(label, extra-small);
+
+  &:not(:first-child) {
+    padding-top: cssUtils.$space-xs;
+  }
+
+  .openui-agent-container--mobile & {
+    @include cssUtils.typography(label, default);
+
+    padding-left: cssUtils.$space-xs;
+  }
+}
+
+.openui-agent-thread-list-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: cssUtils.$space-2xs;
+  width: 100%;
+
+  &__group {
+    padding: 0 0 cssUtils.$space-xs cssUtils.$space-xs;
+  }
+
+  &__row {
+    width: 100%;
+    padding: cssUtils.$space-xs;
+  }
+
+  .openui-agent-container--mobile & {
+    gap: cssUtils.$space-s;
+
+    &__row {
+      padding: cssUtils.$space-s-m;
+    }
+  }
+}
+
+.openui-agent-thread-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // Same 6px bleed and radius as the New Chat row, so selected and hover
+  // rects have room around the icon and title.
+  width: calc(100% + 12px);
+  margin: 0 -6px;
+  border-radius: calc(cssUtils.$radius-s + 3px);
+
+  .openui-agent-container--mobile & {
+    width: 100%;
+    margin: 0;
+  }
+
+  &--selected {
+    background-color: cssUtils.$sunk-deep;
+  }
+
+  &--actions-open {
+    background-color: cssUtils.$highlight-subtle;
+  }
+
+  &:hover,
+  &:focus-within,
+  &--actions-open {
+    background-color: cssUtils.$highlight-subtle;
+
+    .openui-agent-thread-button-dropdown-trigger {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .openui-agent-thread-button-title {
+      padding-right: calc(24px + cssUtils.$space-s-m);
+    }
+  }
+
+  &--selected:hover {
+    background-color: cssUtils.$sunk-deep;
+  }
+
+  &--selected.openui-agent-thread-button--actions-open {
+    background-color: cssUtils.$sunk-deep;
+  }
+}
+
+.openui-agent-thread-button-title {
+  @include cssUtils.button-reset;
+  @include cssUtils.typography(label, small);
+  display: flex;
+  align-items: center;
+  gap: cssUtils.$space-s;
+  // Titles sit back in secondary; the open thread and the hovered row step up
+  // to primary.
+  color: cssUtils.$text-neutral-secondary;
+  transition: color 120ms ease;
+
+  .openui-agent-thread-button:hover &,
+  .openui-agent-thread-button:focus-within &,
+  .openui-agent-thread-button--actions-open &,
+  .openui-agent-thread-button--selected & {
+    color: cssUtils.$text-neutral-primary;
+  }
+  padding: cssUtils.$space-xs;
+  padding-left: calc(cssUtils.$space-xs + 6px);
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+
+  .openui-agent-container--mobile & {
+    @include cssUtils.typography(label, default);
+
+    padding: cssUtils.$space-s-m;
+    padding-right: calc(24px + cssUtils.$space-s-m);
+  }
+}
+
+.openui-agent-thread-button-icon {
+  flex-shrink: 0;
+  font-size: 14px;
+
+  .openui-agent-container--mobile & {
+    font-size: 16px;
+  }
+}
+
+.openui-agent-thread-button-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.openui-agent-thread-button-dropdown-trigger {
+  position: absolute;
+  top: 50%;
+  right: cssUtils.$space-2xs;
+  transform: translateY(-50%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  .openui-agent-container--mobile & {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  &[data-state="open"] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    background-color: cssUtils.$highlight;
+    border-color: cssUtils.$border-interactive;
+  }
+}
+
+.openui-agent-thread-button-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  @include menu.surface;
+  transform: translateX(-4px);
+  z-index: 9999;
+}
+
+// Shared menu row: 32px, edge to edge, plain highlight.
+.openui-agent-thread-button-dropdown-menu-item.openui-button-base {
+  @include menu.item;
+  width: 100%;
+  justify-content: flex-start;
+  border: none;
+
+  &:hover,
+  &:focus-visible,
+  &[data-highlighted] {
+    background-color: cssUtils.$highlight;
+  }
+}

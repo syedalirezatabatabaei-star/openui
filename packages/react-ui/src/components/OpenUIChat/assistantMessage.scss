@@ -1,0 +1,76 @@
+@use "../../cssUtils" as cssUtils;
+
+// User- and assistant-message layout for the GenUI messages rendered by
+// `AgentInterface` (`GenUIUserMessage`, and `GenUIAssistantMessage` →
+// `AssistantMessageContainer`). Extracted from the retired Shell's `thread.scss`
+// so the kept components keep their alignment + logo + bubble layout. The element
+// class names are preserved (`openui-shell-thread-message-{user,assistant}*` — the
+// components still emit them); the mobile / detailed-view ANCESTOR selectors were
+// retargeted from the deleted Shell's container to AgentInterface's
+// (`openui-agent-container--mobile`, `openui-agent-thread-container--detailed-view-active`).
+.openui-shell-thread-message-assistant {
+  width: 100%;
+  display: flex;
+  gap: cssUtils.$space-s;
+  overflow: hidden;
+
+  // When detailed view is active, minimize spacing and hide logo
+  .openui-agent-thread-container--detailed-view-active & {
+    gap: 0;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: cssUtils.$space-s;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    flex-grow: 1;
+  }
+
+  &__text {
+    @include cssUtils.typography(body, default);
+    color: cssUtils.$text-neutral-primary;
+    &:first-child {
+      margin-top: cssUtils.$space-xs;
+    }
+  }
+
+  &__logo {
+    width: 32px;
+    height: 32px;
+    border-radius: cssUtils.$radius-m;
+
+    .openui-agent-container--mobile & {
+      display: none;
+    }
+
+    .openui-agent-thread-container--detailed-view-active & {
+      display: none;
+    }
+  }
+}
+
+.openui-shell-thread-message-user {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0;
+
+  // Filled pill (same fill as the send and New chat buttons), one type step
+  // down (body small). The radius is half a single-line bubble's height, so
+  // one line reads as a full pill and longer messages keep rounded corners.
+  &__content {
+    @include cssUtils.typography(body, small);
+    padding: cssUtils.$space-s cssUtils.$space-m-l;
+    background-color: cssUtils.$inverted-background;
+    color: cssUtils.$foreground;
+    border-radius: cssUtils.$radius-4xl;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    height: fit-content;
+    // Wrapped text gets more room above and below; one line stays a pill.
+    &[data-multiline] {
+      padding-block: cssUtils.$space-m;
+    }
+  }
+}

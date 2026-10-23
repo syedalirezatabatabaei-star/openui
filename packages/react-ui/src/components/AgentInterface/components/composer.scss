@@ -1,0 +1,140 @@
+@use "../../../cssUtils" as cssUtils;
+@use "../column";
+
+$thread-content-inline-padding: cssUtils.$space-m-l;
+// Same reading column as the messages (see ../_column.scss), so the input's
+// edges line up with the conversation above it.
+$thread-content-max-width: calc(
+  #{column.$content-width} + #{$thread-content-inline-padding} + #{$thread-content-inline-padding}
+);
+
+// Pill composer: one row of input + round send button. The radius is half the
+// 56px resting height, so it reads as a pill on one line and eases into a
+// rounded rectangle as the draft grows.
+.openui-agent-thread-composer {
+  max-width: $thread-content-max-width;
+  width: 100%;
+  margin: 0 auto cssUtils.$space-l;
+  padding: 0 $thread-content-inline-padding;
+
+  .openui-agent-container--mobile & {
+    margin: 0;
+    padding: cssUtils.$space-m $thread-content-inline-padding cssUtils.$space-m-l;
+  }
+
+  .openui-agent-thread-container--detailed-view-active & {
+    padding: 0 $thread-content-inline-padding;
+  }
+
+  &__input-wrapper {
+    // A shade above the card in dark mode (a no-op on the white light surface).
+    background-color: color-mix(in oklch, cssUtils.$foreground, cssUtils.$text-white 3%);
+    // 0.5px hairline ring hugging the outside edge (transparent 1px border keeps
+    // the 56px resting height unchanged), very faint so it reads as an edge.
+    border: 1px solid transparent;
+    border-radius: cssUtils.$radius-6xl;
+    box-shadow:
+      0 0 0 0.5px color-mix(in oklch, #{cssUtils.$text-neutral-primary} 8%, transparent),
+      0 4px 16px oklch(0 0 0 / 0.06);
+    overflow: clip;
+    display: flex;
+    flex-direction: row;
+    // Bottom-align so the send button stays on the last line as the draft
+    // grows; input and button share a 32px row height, so one line still
+    // reads as vertically centred.
+    align-items: flex-end;
+    gap: cssUtils.$space-m;
+    min-height: 56px;
+    // 11px + a 32px row + 11px + 2px border = the 56px resting height.
+    padding: 11px cssUtils.$space-m 11px cssUtils.$space-xl;
+
+    &[data-overflow-top],
+    &[data-overflow-bottom] {
+      --openui-agent-thread-composer-mask-top: 0px;
+      --openui-agent-thread-composer-mask-bottom: 0px;
+
+      .openui-agent-thread-composer__input {
+        mask-image: linear-gradient(
+          to bottom,
+          transparent 0,
+          black var(--openui-agent-thread-composer-mask-top),
+          black calc(100% - var(--openui-agent-thread-composer-mask-bottom)),
+          transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          transparent 0,
+          black var(--openui-agent-thread-composer-mask-top),
+          black calc(100% - var(--openui-agent-thread-composer-mask-bottom)),
+          transparent 100%
+        );
+      }
+    }
+
+    &[data-overflow-top] {
+      --openui-agent-thread-composer-mask-top: #{cssUtils.$space-xl};
+    }
+
+    &[data-overflow-bottom] {
+      --openui-agent-thread-composer-mask-bottom: #{cssUtils.$space-xl};
+    }
+  }
+
+  &__input {
+    scrollbar-width: thin;
+    scrollbar-color: cssUtils.$elevated transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: cssUtils.$elevated;
+      border-radius: cssUtils.$radius-full;
+    }
+
+    flex: 1;
+    min-width: 0;
+    padding: 6px 0;
+    resize: none;
+    max-height: 200px;
+    outline: none;
+    border: none;
+    background: transparent;
+    overflow-y: auto;
+    @include cssUtils.typography(body, default);
+    font-size: 15px;
+    line-height: 20px;
+    color: cssUtils.$text-neutral-primary;
+
+    &::placeholder {
+      color: cssUtils.$text-neutral-secondary;
+    }
+  }
+
+  &__action-bar {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+}
+
+// Round, neutral send button. Scoped under the composer root (plus the
+// IconButton class) so it outranks IconButton's square/primary rules.
+.openui-agent-thread-composer .openui-agent-thread-composer__submit-button.openui-icon-button {
+  border-color: transparent;
+  border-radius: cssUtils.$radius-full;
+  background-color: cssUtils.$inverted-background;
+  box-shadow: none;
+  color: cssUtils.$foreground;
+
+  &:not(:disabled):hover,
+  &:not(:disabled):active {
+    background-color: cssUtils.$inverted-background;
+    opacity: 0.85;
+  }
+}

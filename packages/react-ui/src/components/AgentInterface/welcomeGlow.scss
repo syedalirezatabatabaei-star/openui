@@ -1,0 +1,102 @@
+.openui-agent-welcome-screen--animated {
+  --openui-agent-welcome-settle-delay: 80ms;
+
+  .openui-agent-welcome-screen__header {
+    animation: openui-agent-welcome-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1)
+      var(--openui-agent-welcome-settle-delay) both;
+  }
+
+  .openui-agent-welcome-screen__desktop-composer {
+    animation: openui-agent-welcome-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--openui-agent-welcome-settle-delay) + 0.12s) both;
+  }
+
+  .openui-agent-welcome-screen__desktop-starters > * {
+    animation: openui-agent-welcome-enter 0.3s cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--openui-agent-welcome-settle-delay) + 0.24s) both;
+  }
+}
+
+.openui-agent-welcome-glow {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 768px;
+
+  > .openui-agent-desktop-welcome-composer {
+    position: relative;
+    z-index: 1;
+  }
+
+  // The docs site's Faded Dither (see WelcomeDither.tsx), played once: it
+  // appears around the composer and quickly pulls in to merge into it.
+  &__dither {
+    position: absolute;
+    z-index: 0;
+    top: -220px;
+    bottom: -120px;
+    left: 50%;
+    width: min(1180px, 100vw);
+    transform: translateX(-50%);
+    pointer-events: none;
+    opacity: 0;
+    // Stipple colour, read by the shader. A touch under the site's light
+    // tone (#e6e6e6 on #f8f8f8, about 7% ink) so it stays in the background.
+    color: var(
+      --openui-agent-welcome-dither-color,
+      color-mix(in srgb, var(--openui-text-neutral-primary) 6%, transparent)
+    );
+    -webkit-mask-image: radial-gradient(closest-side, black 30%, transparent 100%);
+    mask-image: radial-gradient(closest-side, black 30%, transparent 100%);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: 50% 62%;
+    mask-position: 50% 62%;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    // WelcomeDither reads this delay and duration to time the pull-in.
+    animation: openui-agent-welcome-dither 1.4s linear
+      calc(var(--openui-agent-welcome-settle-delay) + 0.3s) 1 both;
+  }
+}
+
+@keyframes openui-agent-welcome-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes openui-agent-welcome-dither {
+  0% {
+    opacity: 0;
+  }
+
+  12%,
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .openui-agent-welcome-screen--animated {
+    .openui-agent-welcome-screen__header,
+    .openui-agent-welcome-screen__desktop-composer,
+    .openui-agent-welcome-screen__desktop-starters > * {
+      animation: none;
+    }
+  }
+
+  .openui-agent-welcome-glow__dither {
+    display: none;
+  }
+}

@@ -1,0 +1,32 @@
+name: Build JS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: v24.21.0
+          cache: pnpm
+          cache-dependency-path: "pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm run build:packages
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+
+      - name: Run Packages CI
+        run: pnpm --filter "./packages/**" --workspace-concurrency=1 run ci

@@ -1,0 +1,97 @@
+@use "../../../cssUtils" as cssUtils;
+
+// Prefill-chips welcome: grid-stacked starters layers (chips mode only).
+// Layer 1 = chip row + default starters; layer 2 = the selected chip's
+// contextual starters. Layers overlap via grid-area so swapping them never
+// shifts the composer above.
+.openui-agent-welcome-screen__starters-layers {
+  display: grid;
+  align-items: start;
+  width: 100%;
+}
+
+.openui-agent-welcome-screen__starters-layer {
+  display: flex;
+  grid-area: 1 / 1;
+  flex-direction: column;
+  align-items: center;
+  gap: cssUtils.$space-m;
+  width: 100%;
+
+  &[data-hidden] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+// Centred tab row: a leading starters tab plus one tab per prompt template.
+.openui-agent-welcome-screen__chip-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: cssUtils.$space-3xs;
+  width: 100%;
+}
+
+$prefill-tab-muted: color-mix(in oklch, #{cssUtils.$text-neutral-primary} 60%, transparent);
+
+.openui-agent-prefill-chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 cssUtils.$space-m;
+  border: none;
+  border-radius: cssUtils.$radius-full;
+  background: transparent;
+  color: $prefill-tab-muted;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  font-variation-settings: cssUtils.$font-variation-regular;
+  line-height: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease;
+
+  &:not(:disabled):hover {
+    color: cssUtils.$text-neutral-primary;
+  }
+
+  &[aria-selected="true"] {
+    background-color: cssUtils.$foreground; // same surface as the card
+    box-shadow: inset 0 0 0 1px cssUtils.$border-default;
+    color: cssUtils.$text-neutral-primary;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2.5px cssUtils.$border-default;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+
+    & > svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  &__label {
+    padding: 0 cssUtils.$space-xs;
+    white-space: nowrap;
+  }
+}

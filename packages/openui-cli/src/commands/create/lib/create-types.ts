@@ -1,0 +1,27 @@
+import type { ResolvedAuthMethod } from "../../../lib/auth/mint";
+
+/** Template `key` from `templates/templates.json`. */
+export type TemplateName = string;
+/** Overlay `key` from the selected template's `overlays` list. */
+export type OverlayName = string;
+
+export interface CreateAppOptions {
+  name?: string;
+  backendFramework?: OverlayName;
+  example?: string;
+  noInstall?: boolean;
+  noSkill?: boolean;
+  immediate?: boolean;
+  envFile?: string;
+}
+
+export type AiSetup = "openui_cloud" | "openai_compatible_provider";
+
+export type EnvResult = {
+  envWritten: boolean;
+  envVars?: Record<string, string>;
+  /** Comment-only `.env` body when there are no assignments to upsert. */
+  envStub?: string;
+  authMethod?: ResolvedAuthMethod;
+  authSucceeded?: boolean;
+};

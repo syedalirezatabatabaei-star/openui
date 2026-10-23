@@ -1,0 +1,274 @@
+@use "../../cssUtils" as cssUtils;
+@use "./column";
+@use "./threadHeader" as threadHeader;
+
+$center-align-spacing: calc(32px + cssUtils.$space-s);
+// Single centred column shared by the greeting, composer, chips and starters.
+// Matches the in-thread input width (see _column.scss) so the new-chat input
+// has the same edges as the conversation's.
+$welcome-column-width: column.$content-width;
+// Optical lift: the composer sits this far above the card's true centre,
+// which reads as centred (extra bottom padding moves the centre up by half).
+$welcome-optical-lift: 36px;
+
+.openui-agent-welcome-screen {
+  display: flex;
+  flex-direction: column;
+  gap: cssUtils.$space-l;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  max-width: calc(#{column.$content-width} + 2 * #{$center-align-spacing});
+  margin: 0 auto;
+  padding: cssUtils.$space-m $center-align-spacing cssUtils.$space-2xl;
+
+  // Mobile adjustments
+  .openui-agent-container--mobile & {
+    padding: cssUtils.$space-l;
+  }
+
+  // Detailed-view active adjustments
+  .openui-agent-thread-container--detailed-view-active & {
+    padding-left: 0;
+    padding-right: cssUtils.$space-m;
+  }
+
+  // Header section (icon + title/description), centred above the composer
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: cssUtils.$space-l;
+    width: 100%;
+    max-width: $welcome-column-width;
+  }
+
+  // Image container - minimal wrapper, styling handled by consumer
+  &__image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  // Default image styles when using { url: string }
+  &__image {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: cssUtils.$radius-xl;
+  }
+
+  // Content container (title + description)
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: cssUtils.$space-s;
+    width: 100%;
+    max-width: 748px;
+    text-align: center;
+  }
+
+  // Title/greeting text
+  &__title {
+    @include cssUtils.typography(heading, medium);
+    width: 100%;
+    color: cssUtils.$text-neutral-primary;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 400;
+    font-variation-settings: cssUtils.$font-variation-regular;
+    line-height: 1.25;
+
+    .openui-agent-container--mobile & {
+      font-size: 20px;
+    }
+  }
+
+  // Description text
+  &__description {
+    @include cssUtils.typography(heading, medium);
+    color: cssUtils.$text-neutral-secondary;
+    margin: 0;
+    max-width: 800px;
+    font-weight: 500;
+    font-variation-settings: normal;
+  }
+
+  &__composer-starters-container {
+    display: flex;
+    flex-direction: column;
+    gap: cssUtils.$space-2xl;
+    width: 100%;
+    max-width: $welcome-column-width;
+
+    // Everything in the column fills it, so edges line up with the composer.
+    .openui-agent-welcome-glow,
+    .openui-agent-desktop-welcome-composer,
+    .openui-agent-conversation-starter {
+      max-width: 100%;
+    }
+  }
+
+  // Prefill-chips welcome (chips mode only): tighter gap while the chip row
+  // is visible; when drafting hides the layers, collapse the reserved space.
+  // Scoped by __starters-layers so welcomes without chips are unaffected.
+  &__composer-starters-container[data-has-prefill-chips] {
+    gap: cssUtils.$space-xl;
+  }
+
+  &__composer-starters-container:not([data-has-prefill-chips])
+    .openui-agent-welcome-screen__starters-layers {
+    margin-bottom: calc(cssUtils.$space-l - cssUtils.$space-2xl);
+  }
+
+  // Desktop welcome composer container
+  &__desktop-composer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    // Hide on mobile - keep the regular Composer on mobile
+    .openui-agent-container--mobile & {
+      display: none;
+    }
+  }
+
+  // Desktop conversation starters container
+  &__desktop-starters {
+    width: 100%;
+    overflow: hidden;
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+
+    // Hide on mobile - keep the external ConversationStarter on mobile
+    .openui-agent-container--mobile & {
+      display: none;
+    }
+
+    // Reset padding since welcome screen already has padding
+    .openui-agent-conversation-starter {
+      padding: 0;
+    }
+
+    // Center align short variant buttons
+    .openui-agent-conversation-starter--short {
+      justify-content: center;
+    }
+
+    .openui-agent-conversation-starter--long {
+      max-width: 770px;
+    }
+  }
+
+  // When welcome screen has the desktop composer variant
+  &--with-composer {
+    // Adjust gap for desktop layout
+    gap: cssUtils.$space-2xl;
+
+    // On mobile, use normal gap
+    .openui-agent-container--mobile & {
+      gap: cssUtils.$space-l;
+    }
+  }
+}
+
+// Hide the regular Composer when welcome screen with desktop composer is present (desktop only)
+// This uses CSS :has() to detect the welcome screen and hide the default composer
+.openui-agent-thread-container:has(.openui-agent-welcome-screen--with-composer) {
+  .openui-agent-thread-composer {
+    display: none;
+  }
+
+  // But show it on mobile
+  .openui-agent-container--mobile & .openui-agent-thread-composer {
+    display: block;
+  }
+}
+
+// Alternative approach using parent mobile class for better specificity
+.openui-agent-container:not(.openui-agent-container--mobile) {
+  .openui-agent-thread-container:has(.openui-agent-welcome-screen--with-composer) {
+    .openui-agent-thread-composer {
+      display: none;
+    }
+  }
+
+  // Hide the external ConversationStarter when desktop starters exist
+  // Use :not() to exclude the one inside the welcome screen
+  .openui-agent-thread-container:has(.openui-agent-welcome-screen__desktop-starters) {
+    .openui-agent-conversation-starter:not(
+      .openui-agent-welcome-screen__desktop-starters .openui-agent-conversation-starter
+    ) {
+      display: none;
+    }
+  }
+}
+
+// Desktop: pin the composer to the exact centre of the thread card. The
+// greeting fills the top 1fr row and the starters the bottom one, so their
+// heights (and chip swaps) never push the composer off-centre.
+.openui-agent-container:not(.openui-agent-container--mobile)
+  .openui-agent-welcome-screen--with-composer {
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+  // One full-width column (the base rule's justify-content: center would
+  // otherwise shrink it to the content).
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 0;
+  // Same column box as the in-thread composer (column width + 16px gutters,
+  // see components/composer.scss) so the input edges match at every width.
+  max-width: calc(#{$welcome-column-width} + 2 * #{cssUtils.$space-m-l});
+  padding-left: cssUtils.$space-m-l;
+  padding-right: cssUtils.$space-m-l;
+  padding-bottom: calc(#{cssUtils.$space-m} + 2 * #{$welcome-optical-lift});
+
+  .openui-agent-welcome-screen__header {
+    grid-row: 1;
+    align-self: end;
+    margin-bottom: cssUtils.$space-2xl;
+  }
+
+  // Lift the composer and starters into the grid so the composer owns row 2.
+  .openui-agent-welcome-screen__composer-starters-container {
+    display: contents;
+  }
+
+  .openui-agent-welcome-screen__desktop-composer,
+  .openui-agent-welcome-screen__desktop-starters {
+    width: 100%;
+    max-width: $welcome-column-width;
+  }
+
+  .openui-agent-welcome-screen__desktop-composer {
+    grid-row: 2;
+  }
+
+  .openui-agent-welcome-screen__desktop-starters {
+    grid-row: 3;
+    align-self: start;
+    margin: cssUtils.$space-2xl 0 0;
+  }
+
+  [data-has-prefill-chips] .openui-agent-welcome-screen__desktop-starters {
+    margin-top: cssUtils.$space-xl;
+  }
+}
+
+// The chat header row sits above the welcome; pad the bottom by its height so
+// the centre row lines up with the card's centre, not the space below it.
+.openui-agent-container:not(.openui-agent-container--mobile)
+  .openui-agent-thread-chat-panel:has(> .openui-agent-thread-header)
+  > .openui-agent-welcome-screen--with-composer {
+  padding-bottom: calc(
+    #{cssUtils.$space-m} + #{threadHeader.$thread-header-row-height} +
+      #{threadHeader.$thread-header-inset} + 2 * #{$welcome-optical-lift}
+  );
+}
