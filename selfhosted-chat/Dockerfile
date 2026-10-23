@@ -12,7 +12,7 @@ COPY package.json ./
 RUN npm install
 
 COPY . .
-RUN npm run build && npm prune --omit=dev
+RUN npm run typecheck && npm run build && npm prune --omit=dev
 
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
