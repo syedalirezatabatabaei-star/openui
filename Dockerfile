@@ -11,7 +11,8 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 COPY selfhosted-chat/package.json ./package.json
-RUN npm install
+# Install devDependencies for TypeScript checks and the Next.js build; prune them after build.
+RUN npm install --include=dev
 
 COPY selfhosted-chat/ ./
 RUN npm run typecheck && npm run build && npm prune --omit=dev
