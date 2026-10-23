@@ -16,7 +16,7 @@ cp .env.example .env
 nano .env
 ```
 
-Set `OPENAI_API_KEY`. Keep the key on the server; do not commit `.env`.
+Set `OPENAI_API_KEY` and a long random `APP_PASSWORD`. Keep `.env` private; never commit API keys or passwords. The UI and history APIs require HTTP Basic Authentication; use HTTPS (for example, behind your existing reverse proxy/CDN) whenever the server is reachable over an untrusted network. The health endpoint is intentionally public and does not expose secrets.
 
 ## Build and run without Docker Compose
 
@@ -35,7 +35,7 @@ docker run -d \
 
 Open `http://SERVER_IP:1654`. Existing containers are not stopped or replaced.
 
-## Server-side history
+## Authentication\n\nThe site prompts for a username/password using browser HTTP Basic Authentication. The username can be any value; the password must match `APP_PASSWORD`. Set a long random password before starting. This is a shared-password setup, not per-user accounts.\n\n## Server-side history
 
 SQLite database: `/data/chat-history.sqlite` inside the container. The Docker bind mount stores it in `./data/chat-history.sqlite` on the host, so messages and thread lists survive container replacement/recreation as long as the host directory is preserved.
 
@@ -55,7 +55,7 @@ The health endpoint reports whether an API key is configured, never the key itse
 | --- | --- | --- |
 | `OPENAI_BASE_URL` | `https://api.gapgpt.app/v1` | OpenAI-compatible API base |
 | `OPENAI_API_KEY` | required at request time | API key; server-side only |
-| `OPENAI_MODEL` | `gpt-5-mini` | Model ID supported by the provider |
+| `OPENAI_MODEL` | `gpt-5-mini` | Model ID supported by the provider |\n| `APP_PASSWORD` | required | Shared password for UI and history APIs |
 | `DATA_DIR` | `./data` | Directory for SQLite history |
 
 ## Important scope note
